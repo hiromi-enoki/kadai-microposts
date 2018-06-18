@@ -1,4 +1,3 @@
-
     @if (Auth::user()->is_favoriting($user->id))
         {!! Form::open(['route' => ['user.unfavorite', $user->id], 'method' => 'delete']) !!}
             {!! Form::submit('UnFavorite', ['class' => "btn btn-warning btn-xs"]) !!}
