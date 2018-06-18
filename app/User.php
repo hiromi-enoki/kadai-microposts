@@ -102,10 +102,9 @@ class User extends Authenticatable
     {
     // confirm if already infavorite
     $exist = $this->is_favoriting($userId);
-    // confirming that it is not you
-    $its_me = $this->id == $userId;
 
-    if ($exist || $its_me) {
+
+    if ($exist) {
         // do nothing if already infavorite
         return false;
     } else {
@@ -119,11 +118,9 @@ class User extends Authenticatable
     {
     // confirming if already favorite
     $exist = $this->is_favoriting($userId);
-    // confirming that it is not you
-    $its_me = $this->id == $userId;
 
 
-    if ($exist && !$its_me) {
+    if ($exist) {
         // stop infavorite if infavorite
         $this->favoritings()->detach($userId);
         return true;
