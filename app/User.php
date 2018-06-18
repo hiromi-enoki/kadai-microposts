@@ -33,7 +33,7 @@ class User extends Authenticatable
     }
     
     
-    // Additional Part : folloing function
+    //Additional Part : folloing function
     public function followings()
     {
         return $this->belongsToMany(User::class, 'user_follow', 'user_id', 'follow_id')->withTimestamps();
@@ -90,5 +90,57 @@ class User extends Authenticatable
         $follow_user_ids[] = $this->id;
         return Micropost::whereIn('user_id', $follow_user_ids);
     }
+    
+    // お気に入り機能
+    public function favoritings()
+    {
+        return $this->belongsToMany(Micropost::class, 'user_favorite', 'user_id', 'favorite_id')->withTimestamps();
+    }
+    
+    /*public function favoriters()
+    {
+        return $this->belongsToMany(User::class, 'user_favorite', 'favorite_id', 'user_id')->withTimestamps();
+    }
+    */
+    
+    public function favorite($userId)
+    {
+    // confirm if already infavorite
+    $exist = $this->is_favoriting($userId);
+    // confirming that it is not you
+    $its_me = $this->id == $userId;
+
+    if ($exist || $its_me) {
+        // do nothing if already infavorite
+        return false;
+    } else {
+        // follow if not infavorite
+        $this->favoritings()->attach($userId);
+        return true;
+        }
+    }
+    
+    public function unfavorite($userId)
+    {
+    // confirming if already favorite
+    $exist = $this->is_favoriting($userId);
+    // confirming that it is not you
+    $its_me = $this->id == $userId;
+
+
+    if ($exist && !$its_me) {
+        // stop infavorite if infavorite
+        $this->favoritings()->detach($userId);
+        return true;
+    } else {
+        // do nothing if not infavorite
+        return false;
+        }
+    }
+    
+    public function is_favoriting($userId) {
+    return $this->favoritings()->where('favorite_id', $userId)->exists();
+}
+
     
     }
